@@ -1,0 +1,10 @@
+*.csr
+*.crt
+*.csr.cnf
+*.pem
+*.key
+*.ext
+venv
+db
+__pycache__
+.idea/*
