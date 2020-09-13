@@ -1,0 +1,235 @@
+[
+  {
+    "name": "root-ca-1",
+    "issuer": {
+      "country": null,
+      "organization": "",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military Root CA 1"
+    },
+    "CA": true,
+    "rootCA": true,
+    "selfSigned": true,
+    "generateKeys": true,
+    "validityPeriod": 3652,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "nameConstraints": {
+      "permitted": [
+        { "type": "DNS", "value": "Military.com" }
+      ],
+      "excluded": []
+    },
+    "zip": true
+  },
+  {
+    "name": "ocsp-service",
+    "issuer": "output/root-ca-1/root-ca-1.crt",
+    "issuerKey": "output/root-ca-1/root-ca-1.key",
+    "subject": {
+      "country": null,
+      "organization": "Military",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military OCSP"
+    },
+    "CA": false,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 730,
+    "extendedKeyUsage": [
+      "ocspSigning"
+    ],
+    "subject-alternative-name": [
+      {"type": "DNS", "value": "ocsp.Military.com"}
+    ],
+    "zip": true
+  },
+  {
+    "name": "r1-ca-1",
+    "issuer": "output/root-ca-1/root-ca-1.crt",
+    "issuerKey": "output/root-ca-1/root-ca-1.key",
+    "subject": {
+      "country": null,
+      "organization": "Military",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military CA 1"
+    },
+    "CA": true,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 1826,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  },
+  {
+    "name": "r1-ca-2",
+    "issuer": "output/root-ca-1/root-ca-1.crt",
+    "issuerKey": "output/root-ca-1/root-ca-1.key",
+    "subject": {
+      "country": null,
+      "organization": "Military",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military CA 2"
+    },
+    "CA": true,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 1826,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  },
+  {
+    "name": "r1-ca-1-client-1",
+    "issuer": "output/r1-ca-1/r1-ca-1.crt",
+    "issuerKey": "output/r1-ca-1/r1-ca-1.key",
+    "subject": {
+      "country": "RS",
+      "organization": "Military",
+      "organizationalUnit": "Security Dept. RS",
+      "commonName": "Military RS Client 1"
+    },
+    "CA": false,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 730,
+    "extendedKeyUsage": [
+      "clientAuth"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  },
+  {
+    "name": "root-ca-2",
+    "issuer": {
+      "country": null,
+      "organization": "Military",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military Root CA 2"
+    },
+    "CA": true,
+    "rootCA": true,
+    "selfSigned": true,
+    "generateKeys": true,
+    "validityPeriod": 3652,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "nameConstraints": {
+      "permitted": [
+        { "type": "DNS", "value": "Military.com" }
+      ],
+      "excluded": []
+    },
+    "zip": true
+  },
+  {
+    "name": "r2-ca-1",
+    "issuer": "output/root-ca-2/root-ca-2.crt",
+    "issuerKey": "output/root-ca-2/root-ca-2.key",
+    "subject": {
+      "country": null,
+      "organization": "Military",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military CA 1"
+    },
+    "CA": true,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 1826,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  },
+  {
+    "name": "r2-ca-2",
+    "issuer": "output/root-ca-2/root-ca-2.crt",
+    "issuerKey": "output/root-ca-2/root-ca-2.key",
+    "subject": {
+      "country": null,
+      "organization": "Some fancy military unit",
+      "organizationalUnit": "Security Dept.",
+      "commonName": "Military CA 2"
+    },
+    "CA": true,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 1826,
+    "keyUsage": [
+      "keyCertSign",
+      "crlSign"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  },
+  {
+    "name": "r2-ca-1-client-1",
+    "issuer": "output/r2-ca-1/r2-ca-1.crt",
+    "issuerKey": "output/r2-ca-1/r2-ca-1.key",
+    "subject": {
+      "country": "US",
+      "organization": "Military",
+      "organizationalUnit": "Security Dept. US",
+      "commonName": "Military US Client 2"
+    },
+    "CA": false,
+    "rootCA": false,
+    "selfSigned": false,
+    "generateKeys": true,
+    "validityPeriod": 730,
+    "extendedKeyUsage": [
+      "clientAuth"
+    ],
+    "authorityInfoAccess": [
+      {
+        "method": "OCSP",
+        "value": { "type": "URI", "value": "https://ocsp.Military.com/certificates" }
+      }
+    ],
+    "zip": true
+  }
+]
