@@ -1,5 +1,8 @@
 import os
 
+KEY_PATH = os.environ.get('OCSP_KEY_PATH', None)
+CERT_PATH = os.environ.get('OCSP_CERT_PATH', None)
+ISSUERS_PATH = os.environ.get('OCSP_ISSUERS_PATH', None)
 DB_ADDRESS = os.environ.get('OCSP_DB_ADDRESS', '')
 DB_PORT = os.environ.get('OCSP_DB_PORT', '')
 DB_NAME = os.environ.get('OCSP_DB_NAME', '')
