@@ -31,6 +31,20 @@ REASON_FLAGS = {
     'RemoveFromCRL': ReasonFlags.remove_from_crl
 }
 
+REASON_MAPPING = {
+    'Unspecified': ReasonFlags.unspecified,
+    'KeyCompromise': ReasonFlags.key_compromise,
+    'CACompromise': ReasonFlags.ca_compromise,
+    'AffiliationChanged': ReasonFlags.affiliation_changed,
+    'Superseded': ReasonFlags.superseded,
+    'CessationOfOperation': ReasonFlags.cessation_of_operation,
+    'CertificateHold': ReasonFlags.certificate_hold,
+    'PrivilegeWithdrawn': ReasonFlags.privilege_withdrawn,
+    'AACompromise': ReasonFlags.aa_compromise,
+    'RemoveFromCRL': ReasonFlags.remove_from_crl
+}
+
+
 def cert_status_response(req):
     ocsp_req = ocsp.load_der_ocsp_request(req)
 
@@ -116,3 +130,51 @@ def save_cert(data, issuer):
     record.save()
 
     return sn
+
+def revoke_certificate(data, issuer):
+    payload: Mapping = jwt.decode(
+        jwt=data,
+        key=issuer.public_key(),
+        algorithms=['ES256', 'ES512']
+    )
+
+    if 'serialNumber' not in payload:
+        raise RuntimeError('Unprocessable token.')
+
+    sn = payload['serialNumber']
+
+    if 'reason' in payload:
+        reason = payload['reason']
+        if reason not in REASON_MAPPING:
+            raise RuntimeError(f'Unrecognized revocation reason \'{reason}\'.')
+
+    else:
+        reason = 'Unspecified'
+
+    try:
+        record: Record = Record.query.filter_by(sn=sn).one()
+        record.revoked_at = datetime.datetime.now()
+        record.reason = reason
+        record.save()
+
+        affected = revoke_all(sn)
+
+        return sn, reason, affected
+
+    except NoResultFound:
+        raise RuntimeError('Unknown certificate.')
+
+def revoke_all(pk):
+    records = Record.query.filter_by(issuer_sn=pk).all()
+    if not records:
+        return 0
+
+    affected = []
+    for record in records:
+        record.revoked_at = datetime.datetime.now()
+        record.reason = ReasonFlags.ca_compromise
+        record.save()
+
+        affected.append(revoke_all(pk))
+
+    return len(records) + sum(affected)

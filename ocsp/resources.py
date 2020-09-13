@@ -9,8 +9,7 @@ from flask import (
     Blueprint
 )
 
-from ocsp.helpers import cert_status_response, save_cert
-
+from ocsp.helpers import cert_status_response, save_cert, revoke_certificate
 
 import json
 import logging
@@ -78,44 +77,29 @@ def requires_issuer(func):
 @router.route('/admin/certificates/save', methods=['POST'])
 @requires_issuer
 def save_certificate(**kwargs):
-    print("stigao dovde")
     issuer = kwargs['issuer']
     sn = save_cert(request.get_data(), issuer);
     return { 'message': 'certificate registered successfully'}
 
 
-#
-# @router.route('/admin/certificates/revoke', methods=['POST'])
-# # @logged
-# # @requires_issuer
-# def revoke_cert(**kwargs):
-#     log = kwargs['log']
-#     issuer = kwargs['issuer']
-#
-#     sn, reason, affected = revoke_certificate(request.get_data(), issuer)
-#
-#     log['msg'] = 'Successful certificate revocation'
-#     log['revokedCertSer'] = int(sn)
-#     log['revocationReason'] = reason
-#     log['affectedCerts'] = affected
-#
-#     return 'OK'
+
+@router.route('/admin/certificates/revoke', methods=['POST'])
+@requires_issuer
+def revoke_cert(**kwargs):
+    issuer = kwargs['issuer']
+    revoke_certificate(request.get_data(), issuer)
+    return 'OK'
 
 
 @router.route('/certificates', methods=['POST'], defaults={'data': None})
 @router.route('/certificates/<string:data>', methods=['GET'])
-# @logged
 def cert_status(data, **kwargs):
-    log = kwargs['log']
-    log['msg'] = 'Certificate status request'
-
     if request.method == 'POST':
         req = request.get_data()
     else:
         req = base64.urlsafe_b64decode(data)
     resp = cert_status_response(req)
     return send_file(BytesIO(resp), mimetype='application/ocsp-response')
-
 
 @router.route('/')
 def test():

@@ -25,7 +25,7 @@ def create_app():
 def configure(app):
     app.config.from_pyfile('config.py')
     app.config.from_pyfile(os.environ.get('CONFIG_FILE', ''), silent=True)
-
+    register_extensions(app)
     print(app.config)
 
     pem_responder_cert = pem.parse_file(app.config['CERT_PATH'])[0]
@@ -43,16 +43,16 @@ def configure(app):
 
 
 
-    issuers = {}
-    issuers_bundle = pem.parse_file(app.config['ISSUERS_PATH'])
-    for issuer in issuers_bundle:
-        cert: Certificate = load_pem_x509_certificate(
-            data=issuer.as_bytes(),
-            backend=default_backend()
-        )
-        issuers[str(cert.serial_number)] = cert
+    # issuers = {}
+    # issuers_bundle = pem.parse_file(app.config['ISSUERS_PATH'])
+    # for issuer in issuers_bundle:
+    #     cert: Certificate = load_pem_x509_certificate(
+    #         data=issuer.as_bytes(),
+    #         backend=default_backend()
+    #     )
+    #     issuers[str(cert.serial_number)] = cert
 
-    app.config['ISSUERS'] = issuers
+    # app.config['ISSUERS'] = issuers
 
 def register_extensions(app):
     db.init_app(app)

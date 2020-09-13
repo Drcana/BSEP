@@ -81,14 +81,31 @@ def issue_certificate(request):
 
     ser_cert = cert.public_bytes(serialization.Encoding.PEM)
     ser_certs = [ser_cert] + app.config['CERT_CHAIN']
-
+    print("LANAC",app.config['CERT_CHAIN'])
     Record(
         cert_pk=str(cert.serial_number),
         cert=ser_cert,
         common_name=request['subject']['common']
     ).save()
 
+    ocsp_update = jwt.encode(
+        payload={'certificate': base64.b64encode(ser_cert).decode('utf-8'), 'issuerSer':"test"},
+        key=app.config['KEY'],
+        algorithm='ES256'
+    )
 
+    print("DATA", ocsp_update)
+
+    cert_pem = app.config['CERT_PEM'].replace('\n', '\\n')
+    requests.post(
+        url='http://localhost:5001/admin/certificates/save',
+        data=ocsp_update,
+        headers={
+            'X-SSL-CERT': cert_pem,
+            'Content-Type': 'application/octet-stream'
+        }
+    )
+    print("POSLAO REQ")
 
     return wrap(request['subject']['common'], ser_key_pub, ser_key, ser_certs)
 
@@ -318,3 +335,19 @@ def revoke_certificate(pk):
     record.revoked_at = datetime.datetime.now()
     record.save()
 
+    ocsp_update = jwt.encode(
+        payload={'serialNumber': pk},
+        key=app.config['KEY'],
+        algorithm='ES256'
+    )
+
+    cert_pem = app.config['CERT_PEM'].replace('\n', '\\n')
+    resp = requests.post(
+        url='http://localhost:5001/admin/certificates/revoke',
+        data=ocsp_update,
+        headers={
+            'X-SSL-CERT': cert_pem,
+            'Content-Type': 'application/octet-stream'
+        }
+    )
+    print("ODG", resp)
