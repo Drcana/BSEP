@@ -11,7 +11,6 @@ migrate = Migrate(app, db)
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
-
 class Record(db.Model):
     cert_pk = db.Column(db.String(48), primary_key=True)
     created_at = db.Column(

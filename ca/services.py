@@ -94,7 +94,7 @@ def issue_certificate(request):
         algorithm='ES256'
     )
 
-    print("DATA", ocsp_update)
+    print("DATA", cert)
 
     cert_pem = app.config['CERT_PEM'].replace('\n', '\\n')
     requests.post(

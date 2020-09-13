@@ -13,18 +13,11 @@ import pem
 from ca.extensions import db, migrate
 from ca.resources import router
 
-from OpenSSL import SSL
-
-
-# context = SSL.Context(SSL.TLSv1_2_METHOD)
-# context.use_privatekey_file('../key.pem')
-# context.use_certificate_file('../cert.pem')
-
-
 def create_app():
     app = Flask(__name__)
     CORS(app)
-
+    register_extensions(app)
+    register_blueprints(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/vlazd/PycharmProjects/bsep_/db/db-ca.db'
     chain = pem.parse_file("./generated_keys/r1-ca-1/r1-ca-1.crt")
     app.config['CERT_CHAIN'] = [bytes(str(c), encoding='utf-8') for c in chain]
@@ -43,8 +36,7 @@ def create_app():
             backend=default_backend()
         )
 
-    register_extensions(app)
-    register_blueprints(app)
+
     return app
 
 

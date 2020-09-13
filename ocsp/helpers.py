@@ -16,7 +16,7 @@ from cryptography.x509 import (
 from flask import current_app as app
 from sqlalchemy.orm.exc import NoResultFound
 
-from ca.models import Record
+from ocsp.db_config import Record
 
 REASON_FLAGS = {
     'Unspecified': ReasonFlags.unspecified,
