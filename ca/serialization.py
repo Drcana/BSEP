@@ -28,17 +28,17 @@ def validate_identifiers(identifier):
 
 
 class Subject(Schema):
-    org = fields.String(load_from='organization', required=True, validate=validate_identifiers)
-    org_unit = fields.String(load_from='organizationalUnit', required=True, validate=validate_identifiers)
-    common = fields.String(load_from='commonName', required=True, validate=validate_identifiers)
+    org = fields.String(data_key='organization', required=True, validate=validate_identifiers)
+    org_unit = fields.String(data_key='organizationalUnit', required=True, validate=validate_identifiers)
+    common = fields.String(data_key='commonName', required=True, validate=validate_identifiers)
 
     class Meta:
         strict = True
 
 
 class GeneralName(Schema):
-    typ = fields.String(load_from='type', required=True, validate=validate_general_name_type)
-    value = fields.String(load_from='value', required=True, validate=validate_identifiers)
+    typ = fields.String(data_key='type', required=True, validate=validate_general_name_type)
+    value = fields.String(data_key='value', required=True, validate=validate_identifiers)
 
     class Meta:
         strict = True
@@ -62,36 +62,36 @@ class AccessDescription(Schema):
 
 class IssueCertificateRequest(Schema):
     subject = fields.Nested(Subject, required=True)
-    ca = fields.Boolean(load_from='certificationAuthority', required=False, missing=False)
-    gen_keys = fields.Boolean(load_from='generateKeys', required=False, missing=True)
+    ca = fields.Boolean(data_key='certificationAuthority', required=False, missing=False)
+    gen_keys = fields.Boolean(data_key='generateKeys', required=False, missing=True)
     key_usage = fields.List(
         fields.String(),
-        load_from='keyUsage',
+        data_key='keyUsage',
         required=False,
     )
     ext_key_usage = fields.List(
         fields.String(),
-        load_from='extendedKeyUsage',
+        data_key='extendedKeyUsage',
         required=False,
     )
     name_const = fields.Nested(
         NameConstraint,
-        load_from='nameConstraints',
+        data_key='nameConstraints',
         required=False
     )
     sub_alt_name = fields.Nested(
         GeneralName,
-        load_from='subjectAlternativeName',
+        data_key='subjectAlternativeName',
         many=True,
         required=False
     )
     auth_info_access = fields.Nested(
         AccessDescription,
-        load_from='authorityInformationAccess',
+        data_key='authorityInformationAccess',
         many=True,
         required=False
     )
-    public_key = fields.String(load_from='publicKey', required=False)
+    public_key = fields.String(data_key='publicKey', required=False)
 
     class Meta:
         strict = True
