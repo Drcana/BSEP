@@ -19,7 +19,7 @@ def create_app():
     register_extensions(app)
     register_blueprints(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/vlazd/PycharmProjects/bsep_/db/db-ca.db'
-    chain = pem.parse_file("./generated_keys/r1-ca-1/r1-ca-1.crt")
+    chain = pem.parse_file("./generated_keys/ca_demo/ca_demo.crt")
     app.config['CERT_CHAIN'] = [bytes(str(c), encoding='utf-8') for c in chain]
 
     app.config['CERT_PEM'] = str(chain[0])
@@ -29,7 +29,7 @@ def create_app():
         backend=default_backend()
     )
 
-    with open("./generated_keys/r1-ca-1/r1-ca-1.key", 'rb') as f:
+    with open("./generated_keys/ca_demo/ca_demo.key", 'rb') as f:
         app.config['KEY'] = load_pem_private_key(
             data=f.read(),
             password=None,

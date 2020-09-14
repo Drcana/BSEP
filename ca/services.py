@@ -81,7 +81,10 @@ def issue_certificate(request):
 
     ser_cert = cert.public_bytes(serialization.Encoding.PEM)
     ser_certs = [ser_cert] + app.config['CERT_CHAIN']
-    print("LANAC",app.config['CERT_CHAIN'])
+
+    ser_issuer =  x509.load_pem_x509_certificate(app.config['CERT_CHAIN'][0])
+
+    print("LANAC",ser_issuer.serial_number)
     Record(
         cert_pk=str(cert.serial_number),
         cert=ser_cert,
@@ -89,7 +92,7 @@ def issue_certificate(request):
     ).save()
 
     ocsp_update = jwt.encode(
-        payload={'certificate': base64.b64encode(ser_cert).decode('utf-8'), 'issuerSer':"test"},
+        payload={'certificate': base64.b64encode(ser_cert).decode('utf-8'), 'issuerSer':ser_issuer.serial_number},
         key=app.config['KEY'],
         algorithm='ES256'
     )
@@ -144,7 +147,7 @@ def wrap(subject, public_key, private_key, certs):
             with open(os.path.join(ahdir, f'{subject}.key'), 'wb') as f:
                 f.write(private_key)
 
-        with open(os.path.join(ahdir, f'{subject}.cert'), 'wb') as f:
+        with open(os.path.join(ahdir, f'{subject}.crt'), 'wb') as f:
             for cert in certs:
                 f.write(cert)
 
@@ -214,7 +217,6 @@ def parse_name_constraints(constraints):
 
 def parse_subject_alt_name(alt_names):
     return x509.SubjectAlternativeName([parse_general_name(name) for name in alt_names])
-
 
 def parse_access_desc(desc):
     if desc['method'] == 'OCSP':

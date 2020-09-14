@@ -164,17 +164,17 @@ def revoke_certificate(data, issuer):
     except NoResultFound:
         raise RuntimeError('Unknown certificate.')
 
-def revoke_all(pk):
-    records = Record.query.filter_by(issuer_sn=pk).all()
+def revoke_all(sn):
+    records = Record.query.filter_by(issuer_sn=sn).all()
     if not records:
         return 0
 
     affected = []
     for record in records:
         record.revoked_at = datetime.datetime.now()
-        record.reason = ReasonFlags.ca_compromise
+        record.reason = "CACompromise"
         record.save()
-
-        affected.append(revoke_all(pk))
+        print("record ser num", record.issuer_sn)
+        affected.append(revoke_all(record.sn))
 
     return len(records) + sum(affected)

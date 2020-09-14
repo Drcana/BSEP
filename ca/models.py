@@ -10,5 +10,6 @@ class Record(db.Model):
     cert = db.Column(db.Binary, nullable=False)
 
     def save(self):
+        print("SAVE")
         db.session.add(self)
         db.session.commit()
